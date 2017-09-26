@@ -2,8 +2,12 @@ package gr.uoa.di.ted.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +18,7 @@ import gr.uoa.di.ted.service.RoleService;
 import gr.uoa.di.ted.service.UserService;
 
 @Controller
+@RequestMapping
 public class UserController {
 
 	private UserService userService;
@@ -30,7 +35,7 @@ public class UserController {
 	public void setRoleService(RoleService rs){
 		this.roleService = rs;
 	}
-	
+		
 	@RequestMapping(value = "/users", method = RequestMethod.GET)
 	public String listUsers(Model model) {
 		model.addAttribute("user", new User());
@@ -39,9 +44,19 @@ public class UserController {
 		return "user";
 	}
 	
+//	@Autowired
+//	private ConversionService conversionService;
+//	@InitBinder
+//	protected void initBinder(ServletRequestDataBinder binder) {
+//		binder.setConversionService(conversionService);
+//	}
+	
 	//For add and update User both
 	@RequestMapping(value= "/user/add", method = RequestMethod.POST)
-	public String addUser(@ModelAttribute("user") User u){
+	public String addUser(@ModelAttribute("user") User u, BindingResult bindingResult){
+
+		System.out.println("TEST");
+		System.out.println("User:"+u.getRoles().size());
 		
 		if(u.getId() == 0){
 			//new User, add it
@@ -51,7 +66,7 @@ public class UserController {
 			this.userService.updateUser(u);
 		}
 		
-		return "redirect:/users";
+		return "redirect:/";
 		
 	}
 	

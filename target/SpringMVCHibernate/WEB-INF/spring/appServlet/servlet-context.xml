@@ -66,17 +66,31 @@
 	</beans:bean>
 	<context:component-scan base-package="gr.uoa.di.ted" />
 	
-	<!-- <beans:bean id="personDAO" class="com.journaldev.spring.dao.PersonDAOImpl">
-		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
+	<!-- <annotation-driven conversion-service="conversionService"/>
+	<beans:bean id="conversionService"
+      class="org.springframework.context.support.ConversionServiceFactoryBean">
+	    <beans:property name="converters">
+	        <beans:set>
+	            <beans:bean class="gr.uoa.di.ted.converter.Id2Role">
+	            	<beans:constructor-arg ref="roleService"/>
+	            </beans:bean>
+	        </beans:set>
+	    </beans:property>
+	</beans:bean>-->
+	<annotation-driven conversion-service="conversionService"/>
+	<beans:bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean" >
+		<beans:property name="converters">
+			<beans:set>
+	            <beans:bean class="gr.uoa.di.ted.converter.Id2Role">
+	            	<beans:constructor-arg ref="roleService"/>
+	            </beans:bean>
+			</beans:set>
+		</beans:property>
 	</beans:bean>
-	<beans:bean id="personService" class="com.journaldev.spring.service.PersonServiceImpl">
-		<beans:property name="personDAO" ref="personDAO"></beans:property>
-	</beans:bean>
-	<context:component-scan base-package="com.journaldev.spring" />-->
 	
 	
 	<tx:annotation-driven transaction-manager="transactionManager"/>
-	
+		
 	<beans:bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<beans:property name="sessionFactory" ref="hibernate4AnnotatedSessionFactory" />
 	</beans:bean>

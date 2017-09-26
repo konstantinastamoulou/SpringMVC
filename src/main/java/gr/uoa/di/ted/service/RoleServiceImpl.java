@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gr.uoa.di.ted.dao.RoleDAO;
 import gr.uoa.di.ted.model.Role;
+import gr.uoa.di.ted.model.User;
 
 @Service
 public class RoleServiceImpl implements RoleService{
@@ -27,5 +28,22 @@ public class RoleServiceImpl implements RoleService{
 	public List<Role> listRoles() {
 		return this.roleDAO.listRoles();
 	}
-	
+
+	@Override
+	@Transactional
+	public List<Role> listSignUpRoles() {
+		return this.roleDAO.listSignUpRoles();
+	}
+
+	@Override
+	@Transactional
+	public Role getRoleById(int id) {
+		return this.roleDAO.getRoleById(id);
+	}
+
+	@Override
+	@Transactional
+	public void addRole(Role r) {
+		this.roleDAO.addRole(r);
+	}
 }

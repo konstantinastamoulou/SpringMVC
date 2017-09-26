@@ -74,7 +74,7 @@
 			<form:input path="name" />
 		</td> 
 	</tr>	
-	<tr>
+	<!-- <tr>
 		<td>
 			<form:label path="roles">
 				<spring:message text="Role(s)"/>
@@ -82,10 +82,10 @@
 		</td>
 		<td>
 			<form:select path="roles">
-			    <form:options items="${listRoles}" />
+			    <form:options items="${listRoles}" itemValue="id" itemLabel="name" />
 			</form:select>	
 		</td> 
-	</tr>
+	</tr>-->
 	<tr>
 		<td colspan="2">
 			<c:if test="${!empty user.name}">

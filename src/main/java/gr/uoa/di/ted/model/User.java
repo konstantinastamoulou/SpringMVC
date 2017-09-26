@@ -1,5 +1,6 @@
 package gr.uoa.di.ted.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -19,12 +20,14 @@ public class User {
 	private String img_source;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
+//	@OneToOne
 	@JoinTable(
             name = "user_has_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
-	private Set<Role> roles;
+	private Set<Role> roles = new HashSet<Role>();;
+//	private Role role;
 
 	public String getName() {
 		return name;
@@ -66,14 +69,21 @@ public class User {
 		this.id = id;
 	}
 
+//	public Role getRole() {
+//		return role;
+//	}
+//
+//	public void setRole(Role role) {
+//		this.role = role;
+//	}
+//
 	public Set<Role> getRoles() {
 		return roles;
 	}
 
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
-	}
-	
+	}	
 	
 }
 
