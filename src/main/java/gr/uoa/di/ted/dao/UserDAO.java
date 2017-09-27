@@ -4,11 +4,18 @@ import java.util.List;
 
 import gr.uoa.di.ted.model.User;
 
-public interface UserDAO {
 
-	public void addUser(User p);
-	public void updateUser(User p);
-	public List<User> listUsers();
-	public User getUserById(int id);
-	public void removeUser(int id);
+public interface UserDao {
+
+	User findById(int id);
+	
+	User findByUsername(String username);
+	
+	void save(User user);
+	
+	void deleteByUsername(String username);
+	
+	List<User> findAllUsers();
+
 }
+

@@ -2,66 +2,62 @@ package gr.uoa.di.ted.dao;
 
 import java.util.List;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import gr.uoa.di.ted.model.User;
 
-@Repository
-public class UserDAOImpl implements UserDAO{
 
-	private static final Logger logger = LoggerFactory.getLogger(UserDAOImpl.class);
 
-	private SessionFactory sessionFactory;
-	
-	public void setSessionFactory(SessionFactory sf){
-		this.sessionFactory = sf;
+@Repository("userDao")
+public class UserDaoImpl extends AbstractDao<Integer, User> implements UserDao {
+
+	public User findById(int id) {
+		User user = getByKey(id);
+		if(user!=null){
+			Hibernate.initialize(user.getUserProfiles());
+		}
+		return user;
 	}
 
-	@Override
-	public void addUser(User u) {
-		Session session = this.sessionFactory.getCurrentSession();
-		session.persist(u);
-		logger.info("User saved successfully, User Details="+u);
-	}
-
-	@Override
-	public void updateUser(User u) {
-		Session session = this.sessionFactory.getCurrentSession();
-		session.update(u);
-		logger.info("User updated successfully, User Details="+u);
+	public User findByUsername(String username) {
+		System.out.println("Username : "+username);
+		Criteria crit = createEntityCriteria();
+		crit.add(Restrictions.eq("username", username));
+		User user = (User)crit.uniqueResult();
+		if(user!=null){
+			Hibernate.initialize(user.getUserProfiles());
+		}
+		return user;
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
-	public List<User> listUsers() {
-		Session session = this.sessionFactory.getCurrentSession();
-		List<User> usersList = session.createQuery("from User").list();
-		for(User u : usersList){
-			logger.info("User List::"+u);
-		}
-		return usersList;
+	public List<User> findAllUsers() {
+		Criteria criteria = createEntityCriteria().addOrder(Order.asc("firstName"));
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//To avoid duplicates.
+		List<User> users = (List<User>) criteria.list();
+		
+		// No need to fetch userProfiles since we are not showing them on list page. Let them lazy load. 
+		// Uncomment below lines for eagerly fetching of userProfiles if you want.
+		/*
+		for(User user : users){
+			Hibernate.initialize(user.getUserProfiles());
+		}*/
+		return users;
 	}
 
-	@Override
-	public User getUserById(int id) {
-		Session session = this.sessionFactory.getCurrentSession();		
-		User u = (User) session.load(User.class, new Integer(id));
-		logger.info("User loaded successfully, User details="+u);
-		return u;
+	public void save(User user) {
+		persist(user);
 	}
 
-	@Override
-	public void removeUser(int id) {
-		Session session = this.sessionFactory.getCurrentSession();
-		User u = (User) session.load(User.class, new Integer(id));
-		if(null != u){
-			session.delete(u);
-		}
-		logger.info("User deleted successfully, User details="+u);
+	public void deleteByUsername(String username) {
+		Criteria crit = createEntityCriteria();
+		crit.add(Restrictions.eq("username", username));
+		User user = (User)crit.uniqueResult();
+		delete(user);
 	}
 
 }

@@ -4,11 +4,21 @@ import java.util.List;
 
 import gr.uoa.di.ted.model.User;
 
-public interface UserService {
 
-	public void addUser(User u);
-	public void updateUser(User u);
-	public List<User> listUsers();
-	public User getUserById(int id);
-	public void removeUser(int id);
+public interface UserService {
+	
+	User findById(int id);
+	
+	User findByUsername(String username);
+	
+	void saveUser(User user);
+	
+	void updateUser(User user);
+	
+	void deleteUserByUsername(String username);
+
+	List<User> findAllUsers(); 
+	
+	boolean isUserUsernameUnique(Integer id, String username);
+
 }

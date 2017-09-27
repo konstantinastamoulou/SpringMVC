@@ -2,50 +2,63 @@ package gr.uoa.di.ted.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gr.uoa.di.ted.dao.UserDAO;
+import gr.uoa.di.ted.dao.UserDao;
 import gr.uoa.di.ted.model.User;
 
 
-@Service
+@Service("userService")
+@Transactional
 public class UserServiceImpl implements UserService{
 
-	private UserDAO userDAO;
+	@Autowired
+	private UserDao dao;
 
-	public void setUserDAO(UserDAO userDAO) {
-		this.userDAO = userDAO;
+	public User findById(int id) {
+		return dao.findById(id);
 	}
 
-	@Override
-	@Transactional
-	public void addUser(User u) {
-		this.userDAO.addUser(u);
+	public User findByUsername(String username) {
+		User user = dao.findByUsername(username);
+		return user;
 	}
 
-	@Override
-	@Transactional
-	public void updateUser(User u) {
-		this.userDAO.updateUser(u);
+	public void saveUser(User user) {
+		dao.save(user);
 	}
 
-	@Override
-	@Transactional
-	public List<User> listUsers() {
-		return this.userDAO.listUsers();
+	/*
+	 * Since the method is running with Transaction, No need to call hibernate update explicitly.
+	 * Just fetch the entity from db and update it with proper values within transaction.
+	 * It will be updated in db once transaction ends. 
+	 */
+	public void updateUser(User user) {
+		User entity = dao.findById(user.getId());
+		if(entity!=null){
+			entity.setUsername(user.getUsername());
+			entity.setPassword(user.getPassword());
+			entity.setFirstName(user.getFirstName());
+			entity.setLastName(user.getLastName());
+			entity.setEmail(user.getEmail());
+			entity.setUserProfiles(user.getUserProfiles());
+		}
 	}
 
-	@Override
-	@Transactional
-	public User getUserById(int id) {
-		return this.userDAO.getUserById(id);
+	
+	public void deleteUserByUsername(String username) {
+		dao.deleteByUsername(username);
 	}
 
-	@Override
-	@Transactional
-	public void removeUser(int id) {
-		this.userDAO.removeUser(id);
+	public List<User> findAllUsers() {
+		return dao.findAllUsers();
 	}
 
+	public boolean isUserUsernameUnique(Integer id, String username) {
+		User user = findByUsername(username);
+		return ( user == null || ((id != null) && (user.getId() == id)));
+	}
+	
 }
