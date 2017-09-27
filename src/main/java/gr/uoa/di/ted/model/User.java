@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -42,6 +43,10 @@ public class User {
 	@NotEmpty
 	@Column(name="email", nullable=false)
 	private String email;
+	
+	@NotEmpty
+	@Column(name="telephone", nullable=false)
+	private String telephone;
 
 	@NotEmpty
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -50,6 +55,10 @@ public class User {
              inverseJoinColumns = { @JoinColumn(name = "user_profile_id") })
 	private Set<UserProfile> userProfiles = new HashSet<UserProfile>();
 
+	@OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "file_upload_id")
+    private FileUpload file_upload;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -104,6 +113,22 @@ public class User {
 
 	public void setUserProfiles(Set<UserProfile> userProfiles) {
 		this.userProfiles = userProfiles;
+	}
+
+	public String getTelephone() {
+		return telephone;
+	}
+
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+	
+	public FileUpload getFile_upload() {
+		return file_upload;
+	}
+
+	public void setFile_upload(FileUpload file_upload) {
+		this.file_upload = file_upload;
 	}
 
 	@Override

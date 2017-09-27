@@ -1,5 +1,6 @@
 package gr.uoa.di.ted.service;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gr.uoa.di.ted.dao.UserDao;
 import gr.uoa.di.ted.model.User;
+import gr.uoa.di.ted.model.UserProfile;
+import gr.uoa.di.ted.model.UserProfileType;
 
 
 @Service("userService")
@@ -44,6 +47,7 @@ public class UserServiceImpl implements UserService{
 			entity.setLastName(user.getLastName());
 			entity.setEmail(user.getEmail());
 			entity.setUserProfiles(user.getUserProfiles());
+			entity.setTelephone(user.getTelephone());
 		}
 	}
 

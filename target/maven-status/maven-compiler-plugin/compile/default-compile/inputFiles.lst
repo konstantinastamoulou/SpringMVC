@@ -1,10 +1,16 @@
 C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\service\UserService.java
+C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\service\FileUploadServiceImpl.java
+C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\model\FileBucket.java
 C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\dao\UserDao.java
 C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\dao\UserDaoImpl.java
 C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\configuration\AppInitializer.java
 C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\dao\UserProfileDaoImpl.java
+C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\dao\FileUploadDao.java
 C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\dao\UserProfileDao.java
+C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\model\FileUpload.java
+C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\service\FileUploadService.java
 C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\service\UserProfileService.java
+C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\util\FileValidator.java
 C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\configuration\HibernateConfiguration.java
 C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\configuration\AppConfig.java
 C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\controller\AppController.java
@@ -15,3 +21,4 @@ C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java
 C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\service\UserServiceImpl.java
 C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\dao\AbstractDao.java
 C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\model\UserProfile.java
+C:\Users\Mihalis\Downloads\SpringMVCHibernateManyToManyCRUDExample\src\main\java\gr\uoa\di\ted\dao\FileUploadDaoImpl.java

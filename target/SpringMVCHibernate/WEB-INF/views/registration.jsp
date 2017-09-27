@@ -9,13 +9,34 @@
 	<title>User Registration Form</title>
 	<link href="<c:url value='/static/css/bootstrap.css' />" rel="stylesheet"></link>
 	<link href="<c:url value='/static/css/app.css' />" rel="stylesheet"></link>
+	
+	<script>
+		function pass_validation()
+		{
+			var firstpassword=document.regform.fpassword.value;  
+			var secondpassword=document.regform.repassword.value;  
+			
+			console.log(firstpassword);
+			console.log(secondpassword);
+			console.log(document.regform);
+			return true;
+			if(firstpassword==secondpassword){  
+				return true;  
+			}  
+			else{  
+				alert("passwords do not match!");  
+				return false;  
+			}  
+		} 
+	</script>
+
 </head>
 
 <body>
 
  	<div class="generic-container">
 	<div class="well lead">User Registration Form</div>
- 	<form:form method="POST" modelAttribute="user" class="form-horizontal">
+ 	<form:form method="POST" modelAttribute="user" class="form-horizontal" name="regform" onsubmit="return pass_validation()">
 		<form:input type="hidden" path="id" id="id"/>
 		
 		<div class="row">
@@ -65,7 +86,18 @@
 			<div class="form-group col-md-12">
 				<label class="col-md-3 control-lable" for="password">Password</label>
 				<div class="col-md-7">
-					<form:input type="password" path="password" id="password" class="form-control input-sm" />
+					<form:input name="fpassword" type="password" path="password" id="fpassword" class="form-control input-sm" />
+					<div class="has-error">
+						<form:errors path="password" class="help-inline"/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="form-group col-md-12">
+				<label class="col-md-3 control-lable" for="repassword">Re-Enter Password</label>
+				<div class="col-md-7">
+					<form:input name="repassword" type="password" id="repassword" class="form-control input-sm" path="password"/>
 					<div class="has-error">
 						<form:errors path="password" class="help-inline"/>
 					</div>
@@ -80,6 +112,18 @@
 					<form:input type="text" path="email" id="email" class="form-control input-sm" />
 					<div class="has-error">
 						<form:errors path="email" class="help-inline"/>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="form-group col-md-12">
+				<label class="col-md-3 control-lable" for="telephone">Telephone</label>
+				<div class="col-md-7">
+					<form:input type="text" path="telephone" id="telephone" class="form-control input-sm" />
+					<div class="has-error">
+						<form:errors path="telephone" class="help-inline"/>
 					</div>
 				</div>
 			</div>
@@ -109,6 +153,11 @@
 				</c:choose>
 			</div>
 		</div>
+		<c:if test="${edit}">
+            <span class="well pull-left">
+                <a href="<c:url value='/add-document/${user.id}' />">Click here to upload/manage your documents</a>   
+            </span>
+        </c:if>
 	</form:form>
 	</div>
 </body>
