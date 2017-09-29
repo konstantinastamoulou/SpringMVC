@@ -12,6 +12,9 @@
 </head>
 
 <body>
+	
+	<%@include file="/WEB-INF/templates/menu.jsp" %>
+
 	<div class="generic-container">
 		<div class="panel panel-default">
 			  <!-- Default panel contents -->

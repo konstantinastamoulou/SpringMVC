@@ -29,12 +29,14 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import gr.uoa.di.ted.model.Appartment;
+import gr.uoa.di.ted.model.Availability;
 import gr.uoa.di.ted.model.FileBucket;
 import gr.uoa.di.ted.model.FileUpload;
 import gr.uoa.di.ted.model.User;
 import gr.uoa.di.ted.model.UserProfile;
 import gr.uoa.di.ted.model.UserProfileType;
 import gr.uoa.di.ted.service.AppartmentService;
+import gr.uoa.di.ted.service.AvailabilityService;
 import gr.uoa.di.ted.service.FileUploadService;
 import gr.uoa.di.ted.service.UserProfileService;
 import gr.uoa.di.ted.service.UserService;
@@ -61,9 +63,12 @@ public class AppController {
 	
 	@Autowired
 	MessageSource messageSource;
+	
+	@Autowired
+	FileValidator fileValidator;
 
 	@Autowired
-    FileValidator fileValidator;
+    AvailabilityService availabilityService;
      
     @InitBinder("fileBucket")
     protected void initBinder(WebDataBinder binder) {
@@ -375,6 +380,34 @@ public class AppController {
 		appartmentService.deleteById(Integer.valueOf(appid));
 		return "redirect:/my-appartments";
 	}
+	
+	@RequestMapping(value = { "/add-availability/{appid}" }, method = RequestMethod.GET)
+	public String addAvailability(@PathVariable int appid, ModelMap model) {
+		Appartment app = appartmentService.findById(appid);
+		model.addAttribute("appartment", app);
+		
+		Availability n_availability = new Availability();
+		model.addAttribute("newavailability", n_availability);
+		
+		List<Availability> avs = availabilityService.getAvailabilityForAppartment(app);
+		model.addAttribute("availability", avs);
+		
+		return "manageavailability";
+	}
+	
+	
+	@RequestMapping(value = { "/add-availability/{appid}" }, method = RequestMethod.POST)
+    public String uploadAvailability(@Valid Availability newavailability, BindingResult result, ModelMap model, @PathVariable int appid) {
+
+        Appartment app = appartmentService.findById(appid);
+        model.addAttribute("appartment", app);
+
+        newavailability.setAppartment(app);
+		availabilityService.save(newavailability);
+         
+        return "redirect:/add-availability/"+appid;
+    }
+ 
 }
 
 

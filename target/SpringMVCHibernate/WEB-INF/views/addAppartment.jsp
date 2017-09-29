@@ -16,15 +16,41 @@
 		var map;
 		var marker;
 		function initialize() {
-		  var mapOptions = {
-		    zoom: 8,
-		    center: new google.maps.LatLng(-34.397, 150.644)
-		  };
-		  map = new google.maps.Map(document.getElementById('map-canvas'),
-		      mapOptions);
-		  
-		  google.maps.event.addListener(map, 'click', function(event) {
-			   placeMarker(event.latLng);
+			var map_center={lat: 37.9676093, lng: 23.7773929};
+			
+			
+			<%
+				
+				gr.uoa.di.ted.model.Appartment apprt = (gr.uoa.di.ted.model.Appartment)request.getAttribute("appartment");
+				if(apprt.getLatitude()!=0.0)
+				{
+					%>
+					
+					map_center.lat= Math.round(<%=apprt.getLatitude()%>*10000)/10000;
+					map_center.lng= Math.round(<%=apprt.getLongitude()%>*10000)/10000;
+										
+					<%
+				}
+			%>
+
+			var mapOptions = {
+			    zoom: 8,
+			    center: new google.maps.LatLng(map_center)
+			};
+			map = new google.maps.Map(document.getElementById('map-canvas'),
+			      mapOptions);
+			
+			<%			
+			if(apprt.getLatitude()!=0.0)
+			{
+				%>
+					placeMarker(map_center);
+				<%
+			}
+			%>
+			
+			google.maps.event.addListener(map, 'click', function(event) {
+				   placeMarker(event.latLng);
 			});
 
 			
@@ -33,6 +59,8 @@
 		google.maps.event.addDomListener(window, 'load', initialize);
 				
 		function placeMarker(location) {
+			
+			console.log(location);
 			
 			if(marker!=null)
 				marker.setMap(null);
@@ -61,7 +89,7 @@
 		
 		<div class="row">		
 			<div class="form-group col-md-12">
-				<div id="map-canvas" style="height:300px; width:500px"></div>
+				<div id="map-canvas" style="height:300px; width:100%"></div>
 			</div>		
 		</div>
 		
@@ -259,7 +287,7 @@
 		</div>
 		<c:if test="${edit}">
             <span class="well pull-left">
-                <a href="<c:url value='/add-document/${user.id}' />">Click here to upload/manage your documents</a>   
+                <a href="<c:url value='/add-availability/${appartment.id}' />">Click here to set availability</a>   
             </span>
         </c:if>
 	</form:form>
