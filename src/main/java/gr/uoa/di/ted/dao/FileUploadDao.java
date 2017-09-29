@@ -8,7 +8,7 @@ public interface FileUploadDao {
 
 	FileUpload findById(int id);
 	
-	List<FileUpload> findByEntityId(int id);
+	List<FileUpload> findByEntityIdAndEntityType(int id, String type);
 	
 	void save(FileUpload fu);
 	

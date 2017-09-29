@@ -55,9 +55,8 @@ public class User {
              inverseJoinColumns = { @JoinColumn(name = "user_profile_id") })
 	private Set<UserProfile> userProfiles = new HashSet<UserProfile>();
 
-	@OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "file_upload_id")
-    private FileUpload file_upload;
+	@Column(name="", nullable=false)
+	boolean status;
 	
 	public Integer getId() {
 		return id;
@@ -123,12 +122,12 @@ public class User {
 		this.telephone = telephone;
 	}
 	
-	public FileUpload getFile_upload() {
-		return file_upload;
+	public boolean isStatus() {
+		return status;
 	}
 
-	public void setFile_upload(FileUpload file_upload) {
-		this.file_upload = file_upload;
+	public void setStatus(boolean status) {
+		this.status = status;
 	}
 
 	@Override

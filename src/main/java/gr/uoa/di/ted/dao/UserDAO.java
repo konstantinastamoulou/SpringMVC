@@ -17,5 +17,6 @@ public interface UserDao {
 	
 	List<User> findAllUsers();
 
+	User validateUser(User user);
 }
 

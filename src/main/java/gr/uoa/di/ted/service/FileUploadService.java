@@ -7,7 +7,7 @@ import gr.uoa.di.ted.model.FileUpload;
 public interface FileUploadService{
 
 	FileUpload findById(int id);
-	List<FileUpload> findByEntityId(int id);
+	List<FileUpload> findByEntityIdAndEntityType(int id, String type);
 	void deleteById(int id);
 	void saveFileUpload(FileUpload fileUpload);
 }

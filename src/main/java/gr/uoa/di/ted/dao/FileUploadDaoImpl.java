@@ -19,9 +19,10 @@ public class FileUploadDaoImpl extends AbstractDao<Integer, FileUpload> implemen
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<FileUpload> findByEntityId(int id){
+	public List<FileUpload> findByEntityIdAndEntityType(int id, String type){
 		Criteria crit = createEntityCriteria();
 		crit.add(Restrictions.eq("entity_id", id));
+		crit.add(Restrictions.eq("entity_type", type));
 		return (List<FileUpload>)crit.list();
 	}
 	

@@ -60,4 +60,11 @@ public class UserDaoImpl extends AbstractDao<Integer, User> implements UserDao {
 		delete(user);
 	}
 
+	public User validateUser(User user){
+		Criteria crit = createEntityCriteria();
+		crit.add(Restrictions.eq("username", user.getUsername()));
+		crit.add(Restrictions.eq("password", user.getPassword()));
+		User valid_user = (User)crit.uniqueResult();
+		return valid_user;
+	}
 }

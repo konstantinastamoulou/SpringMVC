@@ -20,5 +20,7 @@ public interface UserService {
 	List<User> findAllUsers(); 
 	
 	boolean isUserUsernameUnique(Integer id, String username);
+	
+	User validateUser(User user);
 
 }

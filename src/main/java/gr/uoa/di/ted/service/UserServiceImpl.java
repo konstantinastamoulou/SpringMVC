@@ -65,4 +65,7 @@ public class UserServiceImpl implements UserService{
 		return ( user == null || ((id != null) && (user.getId() == id)));
 	}
 	
+	public User validateUser(User user){
+		return dao.validateUser(user);
+	}
 }

@@ -5,7 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.apache.taglibs.standard.resources.Resources;
@@ -26,11 +28,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
+import gr.uoa.di.ted.model.Appartment;
 import gr.uoa.di.ted.model.FileBucket;
 import gr.uoa.di.ted.model.FileUpload;
 import gr.uoa.di.ted.model.User;
 import gr.uoa.di.ted.model.UserProfile;
 import gr.uoa.di.ted.model.UserProfileType;
+import gr.uoa.di.ted.service.AppartmentService;
 import gr.uoa.di.ted.service.FileUploadService;
 import gr.uoa.di.ted.service.UserProfileService;
 import gr.uoa.di.ted.service.UserService;
@@ -51,6 +55,9 @@ public class AppController {
 	
 	@Autowired
 	FileUploadService fileUploadService;
+	
+	@Autowired
+	AppartmentService appartmentService;
 	
 	@Autowired
 	MessageSource messageSource;
@@ -102,18 +109,23 @@ public class AppController {
 			return "registration";
 		}
 
-		/*
-		 * Preferred way to achieve uniqueness of field [sso] should be implementing custom @Unique annotation 
-		 * and applying it on field [sso] of Model class [User].
-		 * 
-		 * Below mentioned peace of code [if block] is to demonstrate that you can fill custom errors outside the validation
-		 * framework as well while still using internationalized messages.
-		 * 
-		 */
 		if(!userService.isUserUsernameUnique(user.getId(), user.getUsername())){
 			FieldError ssoError =new FieldError("user","username",messageSource.getMessage("non.unique.username", new String[]{user.getUsername()}, Locale.getDefault()));
 		    result.addError(ssoError);
 			return "registration";
+		}
+		
+		user.setStatus(true);
+
+		Iterator<UserProfile> it = user.getUserProfiles().iterator();
+		while(it.hasNext())
+		{
+			UserProfile up=it.next();
+			if(up.getType().equals(UserProfileType.OWNER))
+			{
+				model.addAttribute("await_approval", "Please await for approval for the role of OWNER");
+				user.setStatus(false);
+			}
 		}
 		
 		userService.saveUser(user);
@@ -147,16 +159,6 @@ public class AppController {
 			return "registration";
 		}
 
-		/*//Uncomment below 'if block' if you WANT TO ALLOW UPDATING SSO_ID in UI which is a unique key to a User.
-		if(!userService.isUserSSOUnique(user.getId(), user.getSsoId())){
-			FieldError ssoError =new FieldError("user","ssoId",messageSource.getMessage("non.unique.ssoId", new String[]{user.getSsoId()}, Locale.getDefault()));
-		    result.addError(ssoError);
-			return "registration";
-		}*/
-
-
-		userService.updateUser(user);
-
 		model.addAttribute("success", "User " + user.getFirstName() + " "+ user.getLastName() + " updated successfully");
 		
 		Iterator<UserProfile> it = user.getUserProfiles().iterator();
@@ -166,9 +168,11 @@ public class AppController {
 			if(up.getType().equals(UserProfileType.OWNER))
 			{
 				model.addAttribute("await_approval", "Please await for approval for the role of OWNER");
+				user.setStatus(false);
 			}
 		}
-		
+
+		userService.updateUser(user);
 		return "registrationsuccess";
 	}
 
@@ -200,7 +204,7 @@ public class AppController {
         FileBucket fileModel = new FileBucket();
         model.addAttribute("fileBucket", fileModel);
  
-        List<FileUpload> docs = fileUploadService.findByEntityId(user.getId());
+        List<FileUpload> docs = fileUploadService.findByEntityIdAndEntityType(user.getId(), "user");
         model.addAttribute("documents", docs);
          
         return "managedocuments";
@@ -232,7 +236,7 @@ public class AppController {
             User user = userService.findById(userId);
             model.addAttribute("user", user);
  
-            List<FileUpload> docs = fileUploadService.findByEntityId(user.getId());
+            List<FileUpload> docs = fileUploadService.findByEntityIdAndEntityType(user.getId(), "user");
             model.addAttribute("documents", docs);
              
             return "managedocuments";
@@ -271,13 +275,10 @@ public class AppController {
         document.setDescription(fileBucket.getDescription());
         document.setEntity_id(user.getId());
         document.setMime_type(multipartFile.getContentType());
+        document.setEntity_type("user");
         
         fileUploadService.saveFileUpload(document);
-        
-        
-        
-        
-        
+               
         /*
          * TODO:
          * 	think about how to impl. due to lack of id
@@ -288,8 +289,110 @@ public class AppController {
 //        userService.updateUser(user);
     }
 	
+    @RequestMapping(value = { "/login" }, method = RequestMethod.GET)
+    public String login() {
+        return "login";
+    }
+
+    @RequestMapping(value = "/loginProcess", method = RequestMethod.POST)
+    public String loginProcess(HttpServletRequest request, HttpServletResponse response,
+    		  @ModelAttribute("luser") User user, ModelMap model) {
+    	
+    	System.out.println(user.getUsername());
+    	
+    	User logged_in_user = userService.validateUser(user);
+    	if (null != logged_in_user) {
+    		model.addAttribute("logged_user", logged_in_user);
+    		
+    		HttpSession session = request.getSession();
+    		session.setAttribute("logged_user", logged_in_user);
+    		
+    		return "index";
+    	} 
+    	else {
+    		model.addAttribute("message", "Username or Password is wrong!!");
+    		return "login";
+    	}
+    }
+
+	@RequestMapping(value = { "/add-appartment" }, method = RequestMethod.GET)
+	public String newAppartment(ModelMap model) {
+		Appartment app = new Appartment();
+		model.addAttribute("appartment", app);
+		model.addAttribute("edit", false);
+		return "addAppartment";
+	}
 	
+	@RequestMapping(value = { "/edit-appartment/{appid}" }, method = RequestMethod.GET)
+	public String editAppartment(ModelMap model, @PathVariable int appid) {
+		Appartment app = appartmentService.findById(appid);
+		model.addAttribute("appartment", app);
+		model.addAttribute("edit", true);
+		return "addAppartment";
+	}
 	
+	@RequestMapping(value = { "/edit-appartment/{appid}" }, method = RequestMethod.POST)
+	public String updateUser(@Valid Appartment appartment, BindingResult result,
+			ModelMap model, @PathVariable String appid) {
+
+		if (result.hasErrors()) {
+			return "addAppartment";
+		}
+		
+		appartmentService.updateAppartment(appartment);
+		model.addAttribute("success", "Appartment updated successfully");
+		return "registrationsuccess";
+	}
 	
+	@RequestMapping(value = { "/add-appartment" }, method = RequestMethod.POST)
+	public String saveAppartment(HttpServletRequest request, @Valid Appartment app, BindingResult result,
+			ModelMap model) {
+
+		if (result.hasErrors()) {
+			return "addAppartment";
+		}
+
+		HttpSession session = request.getSession();
+		app.setOwner(userService.findById(((User)session.getAttribute("logged_user")).getId()));
+		appartmentService.save(app);
+
+		//model.addAttribute("success", "User " + user.getFirstName() + " "+ user.getLastName() + " registered successfully");
+		//return "success";
+		return "index";
+	}
 	
+	@RequestMapping(value = { "/my-appartments" }, method = RequestMethod.GET)
+	public String myAppartments(HttpServletRequest request, ModelMap model) {
+		
+		List<Appartment> app_list=appartmentService.findAllOfOwner(((User)request.getSession().getAttribute("logged_user")).getId(), ((User)request.getSession().getAttribute("logged_user")));
+		model.addAttribute("appartments", app_list);
+		return "appartmentList";
+	}
+
+	@RequestMapping(value = { "/delete-appartment/{appid}" }, method = RequestMethod.GET)
+	public String deleteAppartment(@PathVariable String appid) {
+
+		appartmentService.deleteById(Integer.valueOf(appid));
+		return "redirect:/my-appartments";
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

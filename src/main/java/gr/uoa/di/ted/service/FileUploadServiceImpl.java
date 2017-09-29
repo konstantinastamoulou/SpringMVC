@@ -20,8 +20,8 @@ public class FileUploadServiceImpl implements FileUploadService {
 		return dao.findById(id);
 	}
 	
-	public List<FileUpload> findByEntityId(int id){
-		return dao.findByEntityId(id);
+	public List<FileUpload> findByEntityIdAndEntityType(int id, String type){
+		return dao.findByEntityIdAndEntityType(id, type);
 	}
 	
 	public void deleteById(int id){

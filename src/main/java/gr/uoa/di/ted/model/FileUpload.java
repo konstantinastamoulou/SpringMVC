@@ -40,6 +40,9 @@ public class FileUpload {
 	@Column(name="mime_type", nullable=false)
 	private String mime_type;
 	
+	@Column(name="entity_type", nullable=false)
+	private String entity_type;
+	
 	public String getMime_type() {
 		return mime_type;
 	}
@@ -86,6 +89,14 @@ public class FileUpload {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getEntity_type() {
+		return entity_type;
+	}
+
+	public void setEntity_type(String entity_type) {
+		this.entity_type = entity_type;
 	}
 	
 	
