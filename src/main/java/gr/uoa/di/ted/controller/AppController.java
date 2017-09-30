@@ -201,18 +201,36 @@ public class AppController {
 	}
 
 	
-	@RequestMapping(value = { "/add-document/{userId}" }, method = RequestMethod.GET)
-    public String addDocuments(@PathVariable int userId, ModelMap model) {
-        User user = userService.findById(userId);
-        model.addAttribute("user", user);
- 
-        FileBucket fileModel = new FileBucket();
-        model.addAttribute("fileBucket", fileModel);
- 
-        List<FileUpload> docs = fileUploadService.findByEntityIdAndEntityType(user.getId(), "user");
-        model.addAttribute("documents", docs);
-         
-        return "managedocuments";
+	@RequestMapping(value = { "/add-document/{entityType}/{entId}" }, method = RequestMethod.GET)
+    public String addDocuments(@PathVariable int entId,@PathVariable String entityType, ModelMap model) {
+		
+		if(entityType.equals("user"))
+		{
+			User user = userService.findById(entId);
+			model.addAttribute("user", user);
+			
+			FileBucket fileModel = new FileBucket();
+			model.addAttribute("fileBucket", fileModel);
+			
+			List<FileUpload> docs = fileUploadService.findByEntityIdAndEntityType(user.getId(), entityType);
+			model.addAttribute("documents", docs);
+			
+			return "managedocuments";
+		}
+		else if(entityType.equals("appartment"))
+		{
+			Appartment app = appartmentService.findById(entId);
+	        model.addAttribute("appartment", app);
+	 
+	        FileBucket fileModel = new FileBucket();
+	        model.addAttribute("fileBucket", fileModel);
+	 
+	        List<FileUpload> docs = fileUploadService.findByEntityIdAndEntityType(app.getId(), entityType);
+	        model.addAttribute("documents", docs);
+	         
+	        return "managedocsapp";
+		}
+		return "managedocuments";
     }
  
     @RequestMapping(value = { "/delete-document/{userId}/{docId}" }, method = RequestMethod.GET)
@@ -233,31 +251,48 @@ public class AppController {
  		return "redirect:/add-document/"+userId;
 	}
     
-    @RequestMapping(value = { "/add-document/{userId}" }, method = RequestMethod.POST)
-    public String uploadDocument(@Valid FileBucket fileBucket, BindingResult result, ModelMap model, @PathVariable int userId) throws IOException{
+    @RequestMapping(value = { "/add-document/{entityType}/{entId}" }, method = RequestMethod.POST)
+    public String uploadDocument(@Valid FileBucket fileBucket, BindingResult result, ModelMap model, @PathVariable int entId
+    		,@PathVariable String entityType) throws IOException{
          
         if (result.hasErrors()) {
             System.out.println("validation errors");
-            User user = userService.findById(userId);
+            User user = userService.findById(entId);
             model.addAttribute("user", user);
  
-            List<FileUpload> docs = fileUploadService.findByEntityIdAndEntityType(user.getId(), "user");
+            List<FileUpload> docs = fileUploadService.findByEntityIdAndEntityType(user.getId(), entityType);
             model.addAttribute("documents", docs);
              
             return "managedocuments";
         } else {
-             
-            System.out.println("Fetching file");
-             
-            User user = userService.findById(userId);
-            model.addAttribute("user", user);
-
-            System.out.println(fileBucket.getDescription());
-            System.out.println(fileBucket.getFile());
-            saveDocument(fileBucket, user);
- 
-            return "redirect:/add-document/"+userId;
+            
+        	if(entityType.equals("user"))
+        	{
+	            System.out.println("Fetching file");
+	             
+	            User user = userService.findById(entId);
+	            model.addAttribute("user", user);
+	
+	            System.out.println(fileBucket.getDescription());
+	            System.out.println(fileBucket.getFile());
+	            saveDocument(fileBucket, user);
+	 
+	            return "redirect:/add-document/user/"+entId;
+        	}
+            else if(entityType.equals("appartment"))
+    		{
+    			Appartment app = appartmentService.findById(entId);
+    	        model.addAttribute("appartment", app);
+    	 
+    	        List<FileUpload> docs = fileUploadService.findByEntityIdAndEntityType(app.getId(), entityType);
+    	        model.addAttribute("documents", docs);
+    	        
+    	        saveDocument(fileBucket, app);
+    	        
+    	        return "redirect:/add-document/appartment/"+entId;
+    		}
         }
+        return "managedocuments";
     }
     
 	@RequestMapping(value = { "/get-document/{docid}" }, method = RequestMethod.GET)
@@ -268,7 +303,7 @@ public class AppController {
 		response.setContentType(doc.getMime_type());
 		response.getOutputStream().write(doc.getData());
 	}
-    
+
     private void saveDocument(FileBucket fileBucket, User user) throws IOException{
          
         FileUpload document = new FileUpload();
@@ -281,6 +316,30 @@ public class AppController {
         document.setEntity_id(user.getId());
         document.setMime_type(multipartFile.getContentType());
         document.setEntity_type("user");
+        
+        fileUploadService.saveFileUpload(document);
+               
+        /*
+         * TODO:
+         * 	think about how to impl. due to lack of id
+         * 	think about possibility of populating a list on the fly for each entity (MVC-aware technique?)
+         * */
+//        document=fileUploadService.findByEntityId(user.getId());
+//        user.setFile_upload(document);
+//        userService.updateUser(user);
+    }
+    private void saveDocument(FileBucket fileBucket, Appartment app) throws IOException{
+         
+        FileUpload document = new FileUpload();
+         
+        MultipartFile multipartFile = fileBucket.getFile();
+        
+        document.setData(multipartFile.getBytes());
+        document.setFilename(multipartFile.getOriginalFilename());
+        document.setDescription(fileBucket.getDescription());
+        document.setEntity_id(app.getId());
+        document.setMime_type(multipartFile.getContentType());
+        document.setEntity_type("appartment");
         
         fileUploadService.saveFileUpload(document);
                

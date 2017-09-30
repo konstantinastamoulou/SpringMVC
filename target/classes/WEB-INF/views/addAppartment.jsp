@@ -290,6 +290,12 @@
                 <a href="<c:url value='/add-availability/${appartment.id}' />">Click here to set availability</a>   
             </span>
         </c:if>
+		</div>
+		<c:if test="${edit}">
+            <span class="well pull-left">
+                <a href="<c:url value='/add-document/appartment/${appartment.id}' />">Click here to upload/manage your documents</a>   
+            </span>
+        </c:if>
 	</form:form>
 	</div>
 </body>
